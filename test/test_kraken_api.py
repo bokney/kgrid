@@ -395,15 +395,38 @@ class TestMarketData:
         assert isinstance(result, TickerInfo)
 
         assert result.name == "XXBTZUSD"
-        assert result.a == ["30300.10000", "1", "1.000"]
-        assert result.b == ["30300.00000", "1", "1.000"]
-        assert result.c == ["30303.20000", "0.00067643"]
-        assert result.v == ["4083.67001100", "4412.73601799"]
-        assert result.p == ["30706.77771", "30689.13205"]
+        assert result.a == [
+            Decimal("30300.10000"),
+            Decimal("1"),
+            Decimal("1.000")
+        ]
+        assert result.b == [
+            Decimal("30300.00000"),
+            Decimal("1"),
+            Decimal("1.000")
+        ]
+        assert result.c == [
+            Decimal("30303.20000"),
+            Decimal("0.00067643")
+        ]
+        assert result.v == [
+            Decimal("4083.67001100"),
+            Decimal("4412.73601799")
+        ]
+        assert result.p == [
+            Decimal("30706.77771"),
+            Decimal("30689.13205")
+        ]
         assert result.t == [34619, 38907]
-        assert result.l == ["29868.30000", "29868.30000"]
-        assert result.h == ["31631.00000", "31631.00000"]
-        assert result.o == "30502.80000"
+        assert result.l == [
+            Decimal("29868.30000"),
+            Decimal("29868.30000")
+        ]
+        assert result.h == [
+            Decimal("31631.00000"),
+            Decimal("31631.00000")
+        ]
+        assert result.o == Decimal("30502.80000")
 
     @patch.object(MarketData, '_get_response')
     def test_get_ohlc_data(self, mock_get_response, market_data: MarketData):

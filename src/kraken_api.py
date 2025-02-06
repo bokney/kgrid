@@ -130,15 +130,15 @@ class TradableAssetPair(BaseModel):
 
 class TickerInfo(BaseModel):
     name: str
-    a: List[str]  # ask
-    b: List[str]  # bid
-    c: List[str]  # last trade closed
-    v: List[str]  # volume
-    p: List[str]  # volume weighted average price
+    a: List[Decimal]  # ask
+    b: List[Decimal]  # bid
+    c: List[Decimal]  # last trade closed
+    v: List[Decimal]  # volume
+    p: List[Decimal]  # volume weighted average price
     t: List[int]  # number of trades in prev 24h
-    l: List[str]  # low
-    h: List[str]  # high
-    o: str        # todays open price
+    l: List[Decimal]  # low
+    h: List[Decimal]  # high
+    o: Decimal        # todays open price
 
 
 class OHLCTickData(BaseModel):
