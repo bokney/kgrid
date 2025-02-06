@@ -13,7 +13,7 @@ from decimal import Decimal, ROUND_DOWN
 from enum import Enum
 from pydantic import BaseModel, field_validator
 from dotenv import load_dotenv
-from get_logger import get_logger
+from src.get_logger import get_logger
 
 
 class OrderType(str, Enum):
