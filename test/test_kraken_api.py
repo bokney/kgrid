@@ -135,7 +135,7 @@ class TestBaseAPI:
             base_api._process_response(response)
 
         with pytest.raises(ValueError, match="No response received from API"):
-            base_api._process_response(None)
+            base_api._process_response(None)  # type: ignore
 
     def test_nonce_unique(self, base_api: BaseAPI):
         nonce1 = base_api._nonce()
