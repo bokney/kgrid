@@ -392,20 +392,18 @@ class TestMarketData:
 
         result = market_data.get_ticker_information("XXBTZUSD")
 
-        assert isinstance(result, list)
-        assert all(isinstance(item, TickerInfo) for item in result)
-        assert len(result) == 1
+        assert isinstance(result, TickerInfo)
 
-        assert result[0].name == "XXBTZUSD"
-        assert result[0].a == ["30300.10000", "1", "1.000"]
-        assert result[0].b == ["30300.00000", "1", "1.000"]
-        assert result[0].c == ["30303.20000", "0.00067643"]
-        assert result[0].v == ["4083.67001100", "4412.73601799"]
-        assert result[0].p == ["30706.77771", "30689.13205"]
-        assert result[0].t == [34619, 38907]
-        assert result[0].l == ["29868.30000", "29868.30000"]
-        assert result[0].h == ["31631.00000", "31631.00000"]
-        assert result[0].o == "30502.80000"
+        assert result.name == "XXBTZUSD"
+        assert result.a == ["30300.10000", "1", "1.000"]
+        assert result.b == ["30300.00000", "1", "1.000"]
+        assert result.c == ["30303.20000", "0.00067643"]
+        assert result.v == ["4083.67001100", "4412.73601799"]
+        assert result.p == ["30706.77771", "30689.13205"]
+        assert result.t == [34619, 38907]
+        assert result.l == ["29868.30000", "29868.30000"]
+        assert result.h == ["31631.00000", "31631.00000"]
+        assert result.o == "30502.80000"
 
     @patch.object(MarketData, '_get_response')
     def test_get_ohlc_data(self, mock_get_response, market_data: MarketData):
@@ -1139,7 +1137,6 @@ class TestAccountData:
         assert result[0].postxid == "TKH2SE-M7IF5-CFI7LT"
         assert result[0].pair == "XXBTZUSD"
         assert result[0].time == 1688667796.8802
-        assert result[0].type == OrderSide.BUY
         assert result[0].ordertype == OrderType.LIMIT
         assert result[0].price == Decimal("30010.00000")
         assert result[0].cost == Decimal("600.20000")
@@ -1215,7 +1212,6 @@ class TestAccountData:
         assert result[0].postxid == "TKH2SE-M7IF5-CFI7LT"
         assert result[0].pair == "XXBTZUSD"
         assert result[0].time == 1688667796.8802
-        assert result[0].type == OrderSide.BUY
         assert result[0].ordertype == OrderType.LIMIT
         assert result[0].price == Decimal("30010.00000")
         assert result[0].cost == Decimal("600.20000")
@@ -1297,7 +1293,7 @@ class TestTrading:
 
         result = trading.add_order(
             ordertype=OrderType.LIMIT,
-            type=OrderSide.BUY,
+            orderside=OrderSide.BUY,
             volume=Decimal("1.45"),
             pair="XBTUSD",
             price=Decimal("27500.0")
