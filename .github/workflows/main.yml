@@ -32,8 +32,11 @@ jobs:
             - name: Run mypy for type checking
               run: |
                 pip install mypy
-                mypy .        
-            
+                mypy .
+
+            - name: Set PYTHONPATH
+              run: echo "PYTHONPATH=$(pwd)/src" >> $GITHUB_ENV
+              
             - name: Run tests
               run: |
                 pytest --maxfail=1 --disable-warnings -q
