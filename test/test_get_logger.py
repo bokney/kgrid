@@ -1,7 +1,7 @@
 
 import logging
 from logging.handlers import RotatingFileHandler
-from get_logger import get_logger
+from src.get_logger import get_logger
 from io import StringIO
 from pathlib import Path
 from datetime import datetime
