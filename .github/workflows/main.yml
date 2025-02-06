@@ -34,6 +34,12 @@ jobs:
                 pip install mypy
                 mypy .
 
+            - name: Set PYTHONPATH
+              run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+
+            - name: Change to repository root directory
+              run: cd $GITHUB_WORKSPACE
+
             - name: Run tests
               run: |
                 pytest --maxfail=1 --disable-warnings -q
