@@ -1,11 +1,11 @@
 
 import requests
-from requests.exceptions import RequestException
+from requests.exceptions import RequestException, Timeout
 import time
 import hmac
 import hashlib
 import base64
-import urllib
+from urllib.parse import urlencode
 import os
 from abc import ABC
 from typing import Optional, List, Tuple
@@ -245,7 +245,7 @@ class OrderDescription(BaseModel):
     pair: str
     type: OrderSide
     ordertype: OrderType
-    price: Decimal
+    price: Optional[Decimal] = None
     price2: Optional[Decimal] = None
     leverage: Optional[str] = None
     order: Optional[str] = None
@@ -271,7 +271,7 @@ class Order(BaseModel):
     vol_exec: Optional[Decimal] = None
     cost: Optional[Decimal] = None
     fee: Optional[Decimal] = None
-    price: Decimal
+    price: Optional[Decimal] = None
     stopprice: Optional[Decimal] = None
     limitprice: Optional[Decimal] = None
     trigger: Optional[OrderTrigger] = None
@@ -281,10 +281,18 @@ class Order(BaseModel):
     trades: List[str] = []
     sender_sub_id: Optional[str] = None
     reason: Optional[str] = None
+    timeinforce: Optional[TimeInForce] = None
+    close_ordertype: Optional[OrderType] = None
+    close_price: Optional[Decimal] = None
+    close_price2: Optional[Decimal] = None
+    deadline: Optional[str] = None
+    reduce_only: Optional[bool] = None
+    stptype: Optional[STPType] = None
+    displayvol: Optional[Decimal] = None
 
     @field_validator("*")
     def none_to_null(cls, value):
-        return None if value == "None" else value
+        return None if value == "None" or value == "none" else value
 
 
 class TradeType(str, Enum):
@@ -357,11 +365,11 @@ class BaseAPI(ABC):
         self._session = requests.Session()
 
     def _generate_headers(self, URI: str, post_data: dict) -> dict:
-        url_encoded_post_data = urllib.parse.urlencode(post_data)
+        url_encoded_post_data = urlencode(post_data)
         encoded = (str(post_data['nonce']) + url_encoded_post_data).encode()
         message = URI.encode() + hashlib.sha256(encoded).digest()
         signature = hmac.new(
-            base64.b64decode(os.environ.get("API_SECRET")),
+            base64.b64decode(os.environ["API_SECRET"]),
             message,
             hashlib.sha512
         )
@@ -385,9 +393,9 @@ class BaseAPI(ABC):
             response_data = response.json()
             self._logger.debug(f"Response received: {response_data}")
             return response_data
-        except requests.exceptions.RequestException:
+        except RequestException:
             raise ValueError(f"Failed to parse JSON response from {URL}")
-        except requests.exceptions.Timeout:
+        except Timeout:
             raise TimeoutError(f"Request to {URL} timed out")
 
     def _nonce(self) -> int:
@@ -405,6 +413,7 @@ class BaseAPI(ABC):
             return self._process_response(response)
         except Exception as e:
             self._logger.error(f"Error getting response: {e}")
+            raise
 
     def _process_response(self, response: dict) -> dict:
         if not response:
@@ -416,7 +425,7 @@ class BaseAPI(ABC):
         elif not response.get("result"):
             self._logger.error(f"Invalid response format: {response}")
             raise ValueError(f"Invalid response format: {response}")
-        return response.get('result')
+        return response['result']
 
     def _enforce_precision(
             self,
@@ -446,6 +455,7 @@ class MarketData(BaseAPI):
 
         except Exception as e:
             self._logger.error(f"Error fetching server time: {e}")
+            raise
 
     def get_system_status(self) -> SystemStatus:
         endpoint = 'SystemStatus'
@@ -462,6 +472,7 @@ class MarketData(BaseAPI):
 
         except Exception as e:
             self._logger.error(f"Error fetching system status: {e}")
+            raise
 
     def get_asset_info(
             self,
@@ -471,7 +482,8 @@ class MarketData(BaseAPI):
         endpoint = 'Assets'
         post_data = {
             'nonce': self._nonce(),
-            'asset': ','.join(asset) if isinstance(asset, list) else asset,
+            'asset': ','.join(asset)
+            if isinstance(asset, list) else asset or '',
             'aclass': aclass
         }
 
@@ -483,13 +495,16 @@ class MarketData(BaseAPI):
             assets = []
             for asset_symbol, asset_data in response['result'].items():
                 if asset_symbol in (asset
-                                    if isinstance(asset, list) else [asset]):
+                                    if isinstance(asset, list)
+                                    else [asset] if asset
+                                    else []):
                     assets.append(AssetInfo(**asset_data, name=asset_symbol))
 
             return assets
 
         except Exception as e:
             self._logger.error(f"Error fetching asset info: {e}")
+            raise
 
     def get_tradable_asset_pairs(
             self,
@@ -520,6 +535,7 @@ class MarketData(BaseAPI):
 
         except Exception as e:
             self._logger.error(f"Error fetching tradable asset pairs: {e}")
+            raise
 
     def get_ticker_information(self, pair: Optional[str] = None) -> TickerInfo:
         endpoint = 'Ticker'
@@ -536,10 +552,11 @@ class MarketData(BaseAPI):
             tickers = []
             for asset_symbol, asset_data in response['result'].items():
                 tickers.append(TickerInfo(**asset_data, name=asset_symbol))
-            return tickers
+            return tickers[0]
 
         except Exception as e:
             self._logger.error(f"Error fetching ticker information: {e}")
+            raise
 
     def get_ohlc_data(
             self,
@@ -588,6 +605,7 @@ class MarketData(BaseAPI):
 
         except Exception as e:
             self._logger.exception(f"Error fetching OHLC data: {e}")
+            raise
 
     def get_order_book(self, pair: str, count: int = 100) -> OrderBook:
         if 1 >= count <= 500:
@@ -616,6 +634,7 @@ class MarketData(BaseAPI):
 
         except Exception as e:
             self._logger.exception(f"Error fetching orderbook: {e}")
+            raise
 
     def get_recent_trades(
             self,
@@ -658,6 +677,7 @@ class MarketData(BaseAPI):
 
         except Exception as e:
             self._logger.exception(f"Error fetching recent trades: {e}")
+            raise
 
     def get_recent_spreads(self, pair: str, since: int = 0) -> RecentSpreads:
         endpoint = 'Spread'
@@ -683,6 +703,7 @@ class MarketData(BaseAPI):
 
         except Exception as e:
             self._logger.exception(f"Error fetching recent spreads: {e}")
+            raise
 
 
 class AccountData(BaseAPI):
@@ -713,6 +734,7 @@ class AccountData(BaseAPI):
 
         except Exception as e:
             self._logger.exception(f"Error fetching account balance: {e}")
+            raise
 
     def get_extended_account_balance(self) -> List[ExtendedAssetBalance]:
         endpoint = 'BalanceEx'
@@ -739,6 +761,7 @@ class AccountData(BaseAPI):
             self._logger.exception(
                 f"Error fetching extended account balance: {e}"
             )
+            raise
 
     def get_trade_balance(self, asset: Optional[str] = None) -> TradeBalance:
         endpoint = 'TradeBalance'
@@ -756,6 +779,7 @@ class AccountData(BaseAPI):
 
         except Exception as e:
             self._logger.exception(f"Error fetching trade balance: {e}")
+            raise
 
     def get_open_orders(
             self,
@@ -791,6 +815,7 @@ class AccountData(BaseAPI):
 
         except Exception as e:
             self._logger.exception(f"Error fetching open orders: {e}")
+            raise
 
     def get_closed_orders(
             self,
@@ -802,7 +827,7 @@ class AccountData(BaseAPI):
             ofs: Optional[int] = None,
             closetime: Optional[str] = None,
             consolidate_taker: Optional[bool] = None
-            ) -> Optional[Order]:
+            ) -> List[Order]:
         endpoint = 'ClosedOrders'
         post_data = {
             k: v for k, v in {
@@ -827,7 +852,8 @@ class AccountData(BaseAPI):
             for order in response['result'].get('closed'):
                 order_data = response['result']['closed'][order]
                 orders.append(Order(
-                    **{k: v for k, v in order_data.items() if k != 'descr'},
+                    **{k: v for k, v in order_data.items()
+                       if k not in {"descr", "type"}},
                     txid=order,
                     descr=order_data['descr']
                 ))
@@ -836,6 +862,7 @@ class AccountData(BaseAPI):
 
         except Exception as e:
             self._logger.exception(f"Error fetching closed orders: {e}")
+            raise
 
     def query_orders_info(
             self,
@@ -869,10 +896,11 @@ class AccountData(BaseAPI):
             ]
         except Exception as e:
             self._logger.exception(f"Error fetching closed orders: {e}")
+            raise
 
     def get_trades_history(
             self,
-            type: Optional[TradeType] = None,
+            tradetype: Optional[TradeType] = None,
             trades: Optional[bool] = None,
             start: Optional[int] = None,
             end: Optional[int] = None,
@@ -884,7 +912,7 @@ class AccountData(BaseAPI):
         post_data = {
             k: v for k, v in {
                 'nonce': self._nonce(),
-                'type': type,
+                'type': tradetype,
                 'trades': trades,
                 'start': start,
                 'end': end,
@@ -904,6 +932,7 @@ class AccountData(BaseAPI):
             ]
         except Exception as e:
             self._logger.exception(f"Error fetching trade history: {e}")
+            raise
 
     def querey_trades_info(
             self,
@@ -933,93 +962,7 @@ class AccountData(BaseAPI):
 
         except Exception as e:
             self._logger.exception(f"Error fetching trade info: {e}")
-
-    # def get_open_positions(
-    #         self,
-    #         txid: Optional[str],
-    #         docalcs: Optional[bool],
-    #         consolidation: Optional[str]
-    #     ) -> OpenMarginPosition:
-    #     pass
-
-    # def get_ledgers_info(
-    #         self,
-    #         asset: Optional[str] = None,
-    #         aclass: Optional[str] = None,
-    #         type: Optional[OrderType] = None,
-    #         start: Optional[int] = None,
-    #         end: Optional[int] = None,
-    #         ofs: Optional[int] = None,
-    #         without_content: Optional[bool] = None
-    #     ) -> Optional[Dict]:
-    #     endpoint = 'Ledgers'
-    #     post_data = {
-    #         'nonce': self._nonce()
-    #     }
-    #     if asset is not None:
-    #         post_data.update(({'asset': asset}))
-    #     if aclass is not None:
-    #         post_data.update(({'aclass': aclass}))
-    #     if type is not None:
-    #         post_data.update(({'type': type}))
-    #     if start is not None:
-    #         post_data.update(({'start': start}))
-    #     if end is not None:
-    #         post_data.update(({'end': end}))
-    #     if ofs is not None:
-    #         post_data.update(({'ofs': ofs}))
-    #     if without_content is not None:
-    #         post_data.update(({'without_content': without_content}))
-    #     self._logger.info("Fetching ledger info from Kraken API...")
-    #     response = self._get_response(endpoint, post_data)
-    #     return response
-
-    # def querey_ledgers(
-    #         self,
-    #         id: str,
-    #         trades: Optional[bool] = None
-    #     ) -> Optional[Dict]:
-    #     endpoint = 'QueryLedgers'
-    #     post_data = {
-    #         'nonce': self._nonce(),
-    #         'id': id
-    #     }
-    #     if trades is not None:
-    #         post_data.update(({'trades': trades}))
-    #     self._logger.info("Fetching ledger from Kraken API...")
-    #     response = self._get_response(endpoint, post_data)
-    #     return response
-
-    # def get_trade_volume(
-    #         self,
-    #         pair: Optional[str] = None
-    #     ) -> List[TradeVolume]:
-    #     endpoint = 'TradeVolume'
-    #     post_data = {
-    #         'nonce': self._nonce()
-    #     }
-    #     if pair is not None:
-    #         post_data.update(({'pair': pair}))
-
-    #     self._logger.info("Fetching trade volume from Kraken API...")
-
-    #     try:
-    #         response = self._get_response(endpoint, post_data)
-
-    #         volume_list = []
-    #         pair = "" if pair is None else pair
-    #         for p in pair.split(","):
-
-    #         tv_data = response['result']
-    #         fees = tv_data.get("fees")
-    #         tv_data.pop("fees")
-    #         fees_maker = tv_data.get("fees_maker")
-    #         tv_data.pop("fees_maker")
-
-    #         return TradeVolume(**tv_data, fees=fees, fees_maker=fees_maker)
-
-    #     except Exception as e:
-    #         self._logger.exception(f"Error fetching trade volume: {e}")
+            raise
 
 
 class Trading(BaseAPI):
@@ -1029,7 +972,7 @@ class Trading(BaseAPI):
     def add_order(
             self,
             ordertype: OrderType,
-            type: OrderSide,
+            orderside: OrderSide,
             volume: Decimal,
             pair: str,
             userref: Optional[int] = None,
@@ -1038,13 +981,13 @@ class Trading(BaseAPI):
             price: Optional[Decimal] = None,
             price2: Optional[Decimal] = None,
             trigger: Optional[OrderTrigger] = None,
-            leverage: Optional[Decimal] = None,
+            leverage: Optional[str] = None,
             reduce_only: Optional[bool] = None,
             stptype: Optional[STPType] = None,
             oflags: Optional[str] = None,
             timeinforce: Optional[TimeInForce] = None,
-            starttm: Optional[str] = None,
-            expiretm: Optional[str] = None,
+            starttm: Optional[float] = None,
+            expiretm: Optional[float] = None,
             close_ordertype: Optional[OrderType] = None,
             close_price: Optional[Decimal] = None,
             close_price2: Optional[Decimal] = None,
@@ -1077,12 +1020,12 @@ class Trading(BaseAPI):
         post_data = {
             'nonce': self._nonce(),
             'ordertype': ordertype,
-            'type': type,
+            'type': orderside,
             'volume': str(volume),
             'pair': pair,
             'userref': userref,
             'cl_ord_id': cl_ord_id,
-            'displayvol': displayvol,
+            # 'displayvol': displayvol,
             'price': self._enforce_precision(price) if price else None,
             'price2': price2,
             'trigger': trigger if trigger else None,
@@ -1115,12 +1058,11 @@ class Trading(BaseAPI):
                 txid=response['result']['txid'][0],
                 userref=userref,
                 cl_ord_id=cl_ord_id,
-                type=type,
                 vol=volume,
                 status=OrderStatusType.OPEN,
                 descr=OrderDescription(
                     pair=pair,
-                    type=type,
+                    type=orderside,
                     ordertype=ordertype,
                     price=price,
                     price2=price2,
@@ -1132,7 +1074,6 @@ class Trading(BaseAPI):
                 displayvol=displayvol,
                 price=price,
                 trigger=trigger,
-                leverage=leverage,
                 reduce_only=reduce_only,
                 stptype=stptype,
                 oflags=oflags,
@@ -1147,6 +1088,7 @@ class Trading(BaseAPI):
 
         except Exception as e:
             self._logger.exception(f"Error adding order: {e}")
+            raise
 
     def cancel_order(
             self,
@@ -1172,6 +1114,7 @@ class Trading(BaseAPI):
 
         except Exception as e:
             self._logger.exception(f"Error cancelling order(s): {e}")
+            raise
 
 #     def cancel_all(self):
 #         endpoint = 'CancelAll'
