@@ -1,0 +1,42 @@
+
+# python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pyo
+*.pyd
+
+# logs
+logs/
+*.log
+*.log.*
+
+# virtual environment
+venv/
+
+# IDE/editor files
+.vscode/
+
+# System files (macOS, Windows)
+.DS_Store
+Thumbs.db
+ehthumbs.db
+.AppleDouble
+.LSOverride
+
+# Test files
+pytest_cache/
+
+# Environment and secret files
+.env
+.env.*
+.key
+secrets/
+
+# data folder
+data/
+
+# Other files
+.cache/
