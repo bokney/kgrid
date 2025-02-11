@@ -417,7 +417,7 @@ class BaseAPI(ABC):
 
     def _process_response(self, response: dict) -> dict:
         if not response:
-            raise ValueError("No response received from API")
+            raise ValueError("Error: No response received from API")
         if response.get("error"):
             error_message = ", ".join(response["error"])
             self._logger.error(f"API error: {error_message}")
@@ -451,7 +451,7 @@ class MarketData(BaseAPI):
         try:
             response = self._get_response(endpoint, post_data)
 
-            return TimeData(**response['result'])
+            return TimeData(**response)
 
         except Exception as e:
             self._logger.error(f"Error fetching server time: {e}")
@@ -468,7 +468,7 @@ class MarketData(BaseAPI):
         try:
             response = self._get_response(endpoint, post_data)
 
-            return SystemStatus(**response['result'])
+            return SystemStatus(**response)
 
         except Exception as e:
             self._logger.error(f"Error fetching system status: {e}")
@@ -493,7 +493,7 @@ class MarketData(BaseAPI):
             response = self._get_response(endpoint, post_data)
 
             assets = []
-            for asset_symbol, asset_data in response['result'].items():
+            for asset_symbol, asset_data in response.items():
                 if asset_symbol in (asset
                                     if isinstance(asset, list)
                                     else [asset] if asset
@@ -526,7 +526,7 @@ class MarketData(BaseAPI):
             response = self._get_response(endpoint, post_data)
 
             asset_pairs = []
-            for asset_symbol, asset_data in response['result'].items():
+            for asset_symbol, asset_data in response.items():
                 asset_pairs.append(
                     TradableAssetPair(**asset_data, name=asset_symbol)
                 )
@@ -550,7 +550,7 @@ class MarketData(BaseAPI):
             response = self._get_response(endpoint, post_data)
 
             tickers = []
-            for asset_symbol, asset_data in response['result'].items():
+            for asset_symbol, asset_data in response.items():
                 tickers.append(TickerInfo(**asset_data, name=asset_symbol))
             return tickers[0]
 
@@ -595,12 +595,12 @@ class MarketData(BaseAPI):
                     volume=Decimal(tick[6]),
                     count=int(tick[7])
                 )
-                for tick in response['result'][pair]]
+                for tick in response[pair]]
 
             return OHLCData(
                 name=pair,
                 ticks=ticks,
-                last=int(response['result']['last']),
+                last=int(response['last']),
             )
 
         except Exception as e:
@@ -626,9 +626,9 @@ class MarketData(BaseAPI):
             response = self._get_response(endpoint, post_data)
 
             asks = [OrderBookAsk(price=ask[0], volume=ask[1], timestamp=ask[2])
-                    for ask in response['result'][pair]['asks']]
+                    for ask in response[pair]['asks']]
             bids = [OrderBookBid(price=bid[0], volume=bid[1], timestamp=bid[2])
-                    for bid in response['result'][pair]['bids']]
+                    for bid in response[pair]['bids']]
 
             return OrderBook(name=pair, asks=asks, bids=bids)
 
@@ -669,10 +669,10 @@ class MarketData(BaseAPI):
                     miscellaneous=tick[5],
                     trade_id=tick[6]
                 )
-                for tick in response['result'][pair]]
+                for tick in response[pair]]
 
             return RecentTrades(
-                name=pair, tick_data=ticks, last=response['result']['last']
+                name=pair, tick_data=ticks, last=response['last']
             )
 
         except Exception as e:
@@ -693,12 +693,12 @@ class MarketData(BaseAPI):
             response = self._get_response(endpoint, post_data)
 
             spread_data = [SpreadData(time=val[0], bid=val[1], ask=val[2])
-                           for val in response['result'][pair]]
+                           for val in response[pair]]
 
             return RecentSpreads(
                 pair=pair,
                 spread_data=spread_data,
-                last=response['result']['last']
+                last=response['last']
             )
 
         except Exception as e:
@@ -723,7 +723,7 @@ class AccountData(BaseAPI):
 
             assets = []
             self._logger.debug("Retrieved asset balances:")
-            for name, amount in response['result'].items():
+            for name, amount in response.items():
                 if Decimal(amount) > Decimal("0"):
                     self._logger.debug(f"{name}: {amount}")
                     assets.append(
@@ -751,7 +751,7 @@ class AccountData(BaseAPI):
 
             balances = []
             self._logger.debug("Retrieved extended asset balances:")
-            for name, data in response['result'].items():
+            for name, data in response.items():
                 self._logger.debug(f"{name}: {data}")
                 balances.append(ExtendedAssetBalance(**data, name=name))
 
@@ -775,7 +775,7 @@ class AccountData(BaseAPI):
         try:
             response = self._get_response(endpoint, post_data)
 
-            return TradeBalance(**response['result'])
+            return TradeBalance(**response)
 
         except Exception as e:
             self._logger.exception(f"Error fetching trade balance: {e}")
@@ -803,8 +803,8 @@ class AccountData(BaseAPI):
             response = self._get_response(endpoint, post_data)
 
             orders = []
-            for order in response['result'].get('open'):
-                order_data = response['result']['open'][order]
+            for order in response['open']:
+                order_data = response['open'][order]
                 orders.append(Order(
                     **{k: v for k, v in order_data.items() if k != 'descr'},
                     txid=order,
@@ -849,8 +849,8 @@ class AccountData(BaseAPI):
             response = self._get_response(endpoint, post_data)
 
             orders = []
-            for order in response['result'].get('closed'):
-                order_data = response['result']['closed'][order]
+            for order in response['closed']:
+                order_data = response['closed'][order]
                 orders.append(Order(
                     **{k: v for k, v in order_data.items()
                        if k not in {"descr", "type"}},
@@ -892,7 +892,7 @@ class AccountData(BaseAPI):
                     txid=order,
                     descr=order_data['descr']
                 )
-                for order, order_data in response['result'].items()
+                for order, order_data in response.items()
             ]
         except Exception as e:
             self._logger.exception(f"Error fetching closed orders: {e}")
@@ -928,7 +928,7 @@ class AccountData(BaseAPI):
             response = self._get_response(endpoint, post_data)
             return [
                 Trade(**trade_data, txid=trade)
-                for trade, trade_data in response['result']['trades'].items()
+                for trade, trade_data in response['trades'].items()
             ]
         except Exception as e:
             self._logger.exception(f"Error fetching trade history: {e}")
@@ -954,8 +954,8 @@ class AccountData(BaseAPI):
             response = self._get_response(endpoint, post_data)
 
             trade_list = []
-            for trade in response['result']:
-                order_data = response['result'][trade]
+            for trade in response:
+                order_data = response[trade]
                 trade_list.append(Trade(**order_data, txid=trade))
 
             return trade_list
@@ -1051,11 +1051,11 @@ class Trading(BaseAPI):
             response = self._get_response(endpoint, post_data)
 
             self._logger.info(
-                f"Placed order: {response['result'].get('descr').get('order')}"
+                f"Placed order: {response['descr']['order']}"
             )
 
             return Order(
-                txid=response['result']['txid'][0],
+                txid=response['txid'][0],
                 userref=userref,
                 cl_ord_id=cl_ord_id,
                 vol=volume,
@@ -1110,7 +1110,7 @@ class Trading(BaseAPI):
 
         try:
             response = self._get_response(endpoint, post_data)
-            return response['result']['count']
+            return response['count']
 
         except Exception as e:
             self._logger.exception(f"Error cancelling order(s): {e}")
