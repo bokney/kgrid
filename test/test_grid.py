@@ -89,14 +89,14 @@ class TestGridStrategy:
     ):
         mock_get_tradable_asset_pairs.return_value = mock_tradable_pairs
 
-        strategy = GridStrategy(
+        GridStrategy(
             pair="ETH/XBT",
             base_price=Decimal("3000.0"),
             percentage=Decimal("0.02"),
             rung_count=5
         )
         with pytest.raises(ValueError):
-            strategy = GridStrategy(
+            GridStrategy(
                 pair="ETH/XBT",
                 base_price=Decimal("-1"),
                 percentage=Decimal("0.02"),
@@ -113,14 +113,14 @@ class TestGridStrategy:
     ):
         mock_get_tradable_asset_pairs.return_value = mock_tradable_pairs
 
-        strategy = GridStrategy(
+        GridStrategy(
             pair="ETH/XBT",
             base_price=Decimal("3000.0"),
             percentage=Decimal("0.02"),
             rung_count=5
         )
         with pytest.raises(ValueError):
-            strategy = GridStrategy(
+            GridStrategy(
                 pair="ETH/XBT",
                 base_price=Decimal("3000.0"),
                 percentage=Decimal("-0.1"),
@@ -137,7 +137,7 @@ class TestGridStrategy:
     ):
         mock_get_tradable_asset_pairs.return_value = mock_tradable_pairs
         try:
-            strategy = GridStrategy(
+            GridStrategy(
                 pair="ETH/XBT",
                 base_price=Decimal("3000.0"),
                 percentage=Decimal("0.02"),
@@ -154,31 +154,9 @@ class TestGridStrategy:
     ):
         mock_get_tradable_asset_pairs.return_value = mock_tradable_pairs
         with pytest.raises(ValueError):
-            strategy = GridStrategy(
+            GridStrategy(
                 pair="ABC/EFG",
                 base_price=Decimal("1000.0"),
                 percentage=Decimal("0.05"),
                 rung_count=10
             )
-
-
-
-    
-    # @patch.object(MarketData, 'get_tradable_asset_pairs')
-    # @patch.object(MarketData, 'get_ticker_information')
-    # def test_grid_strategy_init(
-    #     self,
-    #     mock_get_pairs,
-    #     mock_get_ticker,
-    #     mock_ticker_info,
-    #     mock_tradable_pairs
-    # ):
-    #     mock_get_pairs.return_value = mock_tradable_pairs
-    #     mock_get_ticker.return_value = mock_ticker_info
-
-    #     strategy = GridStrategy(
-    #         pair="BTC/USD",
-    #         base_price=Decimal("100"),
-    #         percentage=Decimal("0.1"),
-    #         rung_count=5
-    #     )
