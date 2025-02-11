@@ -10,7 +10,7 @@ class TestGridStrategy:
     @pytest.fixture
     def mock_ticker_info(self):
         return TickerInfo(
-            name="XXBTZUSD",
+            name="XETHXXBT",
             a=[
                 Decimal("30300.10000"),
                 Decimal("1"),
@@ -132,7 +132,7 @@ class TestGridStrategy:
     def test_check_valid_pair(
         self,
         mock_get_tradable_asset_pairs,
-        get_ticker_information,
+        mock_get_ticker_information,
         mock_tradable_pairs
     ):
         mock_get_tradable_asset_pairs.return_value = mock_tradable_pairs
@@ -160,3 +160,24 @@ class TestGridStrategy:
                 percentage=Decimal("0.05"),
                 rung_count=10
             )
+
+    @patch.object(MarketData, 'get_ticker_information')
+    @patch.object(MarketData, 'get_tradable_asset_pairs')
+    def test_update_price(
+        self,
+        mock_get_tradable_asset_pairs,
+        mock_get_ticker_information,
+        mock_tradable_pairs,
+        mock_ticker_info
+    ):
+        mock_get_tradable_asset_pairs.return_value = mock_tradable_pairs
+        mock_get_ticker_information.return_value = mock_ticker_info
+        strategy = GridStrategy(
+            pair="ETH/XBT",
+            base_price=Decimal("3000.0"),
+            percentage=Decimal("0.02"),
+            rung_count=5
+        )
+        assert strategy.pair == "ETH/XBT"
+        assert strategy.current_ask == Decimal("30300.10000")
+        assert strategy.current_bid == Decimal("30300.10000")
