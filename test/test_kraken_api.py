@@ -162,11 +162,8 @@ class TestMarketData:
     @patch.object(MarketData, '_get_response')
     def test_get_server_time(self, mock_get_response, market_data: MarketData):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "unixtime": 1688669448,
-                "rfc1123": "Thu, 06 Jul 23 18:50:48 +0000"
-            }
+            "unixtime": 1688669448,
+            "rfc1123": "Thu, 06 Jul 23 18:50:48 +0000"
         }
 
         result = market_data.get_server_time()
@@ -182,11 +179,8 @@ class TestMarketData:
         market_data: MarketData
     ):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "status": "online",
-                "timestamp": "2023-07-06T18:52:00Z"
-            }
+            "status": "online",
+            "timestamp": "2023-07-06T18:52:00Z"
         }
 
         result = market_data.get_system_status()
@@ -198,32 +192,29 @@ class TestMarketData:
     @patch.object(MarketData, '_get_response')
     def test_get_asset_info(self, mock_get_response, market_data: MarketData):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "XXBT": {
-                    "aclass": "currency",
-                    "altname": "XBT",
-                    "decimals": 10,
-                    "display_decimals": 5,
-                    "collateral_value": 1,
-                    "status": "enabled"
-                },
-                "ZEUR": {
-                    "aclass": "currency",
-                    "altname": "EUR",
-                    "decimals": 4,
-                    "display_decimals": 2,
-                    "collateral_value": 1,
-                    "status": "enabled"
-                },
-                "ZUSD": {
-                    "aclass": "currency",
-                    "altname": "USD",
-                    "decimals": 4,
-                    "display_decimals": 2,
-                    "collateral_value": 1,
-                    "status": "enabled"
-                }
+            "XXBT": {
+                "aclass": "currency",
+                "altname": "XBT",
+                "decimals": 10,
+                "display_decimals": 5,
+                "collateral_value": 1,
+                "status": "enabled"
+            },
+            "ZEUR": {
+                "aclass": "currency",
+                "altname": "EUR",
+                "decimals": 4,
+                "display_decimals": 2,
+                "collateral_value": 1,
+                "status": "enabled"
+            },
+            "ZUSD": {
+                "aclass": "currency",
+                "altname": "USD",
+                "decimals": 4,
+                "display_decimals": 2,
+                "collateral_value": 1,
+                "status": "enabled"
             }
         }
 
@@ -252,101 +243,98 @@ class TestMarketData:
         market_data: MarketData
     ):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "XETHXXBT": {
-                    "altname": "ETHXBT",
-                    "wsname": "ETH/XBT",
-                    "aclass_base": "currency",
-                    "base": "XETH",
-                    "aclass_quote": "currency",
-                    "quote": "XXBT",
-                    "lot": "unit",
-                    "cost_decimals": 6,
-                    "pair_decimals": 5,
-                    "lot_decimals": 8,
-                    "lot_multiplier": 1,
-                    "leverage_buy": [2, 3, 4, 5],
-                    "leverage_sell": [2, 3, 4, 5],
-                    "fees": [
-                        [0, 0.26],
-                        [50000, 0.24],
-                        [100000, 0.22],
-                        [250000, 0.2],
-                        [500000, 0.18],
-                        [1000000, 0.16],
-                        [2500000, 0.14],
-                        [5000000, 0.12],
-                        [10000000, 0.1],
-                    ],
-                    "fees_maker": [
-                        [0, 0.16],
-                        [50000, 0.14],
-                        [100000, 0.12],
-                        [250000, 0.1],
-                        [500000, 0.08],
-                        [1000000, 0.06],
-                        [2500000, 0.04],
-                        [5000000, 0.02],
-                        [10000000, 0],
-                    ],
-                    "fee_volume_currency": "ZUSD",
-                    "margin_call": 80,
-                    "margin_stop": 40,
-                    "ordermin": "0.01",
-                    "costmin": "0.00002",
-                    "tick_size": "0.00001",
-                    "status": "online",
-                    "long_position_limit": 1100,
-                    "short_position_limit": 400,
-                },
-                "XXBTZUSD": {
-                    "altname": "XBTUSD",
-                    "wsname": "XBT/USD",
-                    "aclass_base": "currency",
-                    "base": "XXBT",
-                    "aclass_quote": "currency",
-                    "quote": "ZUSD",
-                    "lot": "unit",
-                    "cost_decimals": 5,
-                    "pair_decimals": 1,
-                    "lot_decimals": 8,
-                    "lot_multiplier": 1,
-                    "leverage_buy": [2, 3, 4, 5],
-                    "leverage_sell": [2, 3, 4, 5],
-                    "fees": [
-                        [0, 0.26],
-                        [50000, 0.24],
-                        [100000, 0.22],
-                        [250000, 0.2],
-                        [500000, 0.18],
-                        [1000000, 0.16],
-                        [2500000, 0.14],
-                        [5000000, 0.12],
-                        [10000000, 0.1],
-                    ],
-                    "fees_maker": [
-                        [0, 0.16],
-                        [50000, 0.14],
-                        [100000, 0.12],
-                        [250000, 0.1],
-                        [500000, 0.08],
-                        [1000000, 0.06],
-                        [2500000, 0.04],
-                        [5000000, 0.02],
-                        [10000000, 0],
-                    ],
-                    "fee_volume_currency": "ZUSD",
-                    "margin_call": 80,
-                    "margin_stop": 40,
-                    "ordermin": "0.0001",
-                    "costmin": "0.5",
-                    "tick_size": "0.1",
-                    "status": "online",
-                    "long_position_limit": 250,
-                    "short_position_limit": 200,
-                },
+            "XETHXXBT": {
+                "altname": "ETHXBT",
+                "wsname": "ETH/XBT",
+                "aclass_base": "currency",
+                "base": "XETH",
+                "aclass_quote": "currency",
+                "quote": "XXBT",
+                "lot": "unit",
+                "cost_decimals": 6,
+                "pair_decimals": 5,
+                "lot_decimals": 8,
+                "lot_multiplier": 1,
+                "leverage_buy": [2, 3, 4, 5],
+                "leverage_sell": [2, 3, 4, 5],
+                "fees": [
+                    [0, 0.26],
+                    [50000, 0.24],
+                    [100000, 0.22],
+                    [250000, 0.2],
+                    [500000, 0.18],
+                    [1000000, 0.16],
+                    [2500000, 0.14],
+                    [5000000, 0.12],
+                    [10000000, 0.1],
+                ],
+                "fees_maker": [
+                    [0, 0.16],
+                    [50000, 0.14],
+                    [100000, 0.12],
+                    [250000, 0.1],
+                    [500000, 0.08],
+                    [1000000, 0.06],
+                    [2500000, 0.04],
+                    [5000000, 0.02],
+                    [10000000, 0],
+                ],
+                "fee_volume_currency": "ZUSD",
+                "margin_call": 80,
+                "margin_stop": 40,
+                "ordermin": "0.01",
+                "costmin": "0.00002",
+                "tick_size": "0.00001",
+                "status": "online",
+                "long_position_limit": 1100,
+                "short_position_limit": 400,
             },
+            "XXBTZUSD": {
+                "altname": "XBTUSD",
+                "wsname": "XBT/USD",
+                "aclass_base": "currency",
+                "base": "XXBT",
+                "aclass_quote": "currency",
+                "quote": "ZUSD",
+                "lot": "unit",
+                "cost_decimals": 5,
+                "pair_decimals": 1,
+                "lot_decimals": 8,
+                "lot_multiplier": 1,
+                "leverage_buy": [2, 3, 4, 5],
+                "leverage_sell": [2, 3, 4, 5],
+                "fees": [
+                    [0, 0.26],
+                    [50000, 0.24],
+                    [100000, 0.22],
+                    [250000, 0.2],
+                    [500000, 0.18],
+                    [1000000, 0.16],
+                    [2500000, 0.14],
+                    [5000000, 0.12],
+                    [10000000, 0.1],
+                ],
+                "fees_maker": [
+                    [0, 0.16],
+                    [50000, 0.14],
+                    [100000, 0.12],
+                    [250000, 0.1],
+                    [500000, 0.08],
+                    [1000000, 0.06],
+                    [2500000, 0.04],
+                    [5000000, 0.02],
+                    [10000000, 0],
+                ],
+                "fee_volume_currency": "ZUSD",
+                "margin_call": 80,
+                "margin_stop": 40,
+                "ordermin": "0.0001",
+                "costmin": "0.5",
+                "tick_size": "0.1",
+                "status": "online",
+                "long_position_limit": 250,
+                "short_position_limit": 200,
+            }
         }
 
         result = market_data.get_tradable_asset_pairs("XETHXXBT")
@@ -374,20 +362,17 @@ class TestMarketData:
         market_data: MarketData
     ):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "XXBTZUSD": {
-                    "a": ["30300.10000", "1", "1.000"],
-                    "b": ["30300.00000", "1", "1.000"],
-                    "c": ["30303.20000", "0.00067643"],
-                    "v": ["4083.67001100", "4412.73601799"],
-                    "p": ["30706.77771", "30689.13205"],
-                    "t": [34619, 38907],
-                    "l": ["29868.30000", "29868.30000"],
-                    "h": ["31631.00000", "31631.00000"],
-                    "o": "30502.80000",
-                }
-            },
+            "XXBTZUSD": {
+                "a": ["30300.10000", "1", "1.000"],
+                "b": ["30300.00000", "1", "1.000"],
+                "c": ["30303.20000", "0.00067643"],
+                "v": ["4083.67001100", "4412.73601799"],
+                "p": ["30706.77771", "30689.13205"],
+                "t": [34619, 38907],
+                "l": ["29868.30000", "29868.30000"],
+                "h": ["31631.00000", "31631.00000"],
+                "o": "30502.80000",
+            }
         }
 
         result = market_data.get_ticker_information("XXBTZUSD")
@@ -431,52 +416,49 @@ class TestMarketData:
     @patch.object(MarketData, '_get_response')
     def test_get_ohlc_data(self, mock_get_response, market_data: MarketData):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "XXBTZUSD": [
-                    [
-                        1688671200,
-                        "30306.1",
-                        "30306.2",
-                        "30305.7",
-                        "30305.7",
-                        "30306.1",
-                        "3.39243896",
-                        23,
-                    ],
-                    [
-                        1688671260,
-                        "30304.5",
-                        "30304.5",
-                        "30300.0",
-                        "30300.0",
-                        "30300.0",
-                        "4.42996871",
-                        18,
-                    ],
-                    [
-                        1688671320,
-                        "30300.3",
-                        "30300.4",
-                        "30291.4",
-                        "30291.4",
-                        "30294.7",
-                        "2.13024789",
-                        25,
-                    ],
-                    [
-                        1688671380,
-                        "30291.8",
-                        "30295.1",
-                        "30291.8",
-                        "30295.0",
-                        "30293.8",
-                        "1.01836275",
-                        9,
-                    ],
+            "XXBTZUSD": [
+                [
+                    1688671200,
+                    "30306.1",
+                    "30306.2",
+                    "30305.7",
+                    "30305.7",
+                    "30306.1",
+                    "3.39243896",
+                    23,
                 ],
-                "last": 1688672160,
-            },
+                [
+                    1688671260,
+                    "30304.5",
+                    "30304.5",
+                    "30300.0",
+                    "30300.0",
+                    "30300.0",
+                    "4.42996871",
+                    18,
+                ],
+                [
+                    1688671320,
+                    "30300.3",
+                    "30300.4",
+                    "30291.4",
+                    "30291.4",
+                    "30294.7",
+                    "2.13024789",
+                    25,
+                ],
+                [
+                    1688671380,
+                    "30291.8",
+                    "30295.1",
+                    "30291.8",
+                    "30295.0",
+                    "30293.8",
+                    "1.01836275",
+                    9,
+                ],
+            ],
+            "last": 1688672160
         }
 
         result = market_data.get_ohlc_data("XXBTZUSD")
@@ -508,21 +490,18 @@ class TestMarketData:
     @patch.object(MarketData, '_get_response')
     def test_get_order_book(self, mock_get_response, market_data: MarketData):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "XXBTZUSD": {
-                    "asks": [
-                        ["30384.10000", "2.059", 1688671659],
-                        ["30387.90000", "1.500", 1688671380],
-                        ["30393.70000", "9.871", 1688671261],
-                    ],
-                    "bids": [
-                        ["30297.00000", "1.115", 1688671636],
-                        ["30296.70000", "2.002", 1688671674],
-                        ["30289.80000", "5.001", 1688671673],
-                    ],
-                }
-            },
+            "XXBTZUSD": {
+                "asks": [
+                    ["30384.10000", "2.059", 1688671659],
+                    ["30387.90000", "1.500", 1688671380],
+                    ["30393.70000", "9.871", 1688671261],
+                ],
+                "bids": [
+                    ["30297.00000", "1.115", 1688671636],
+                    ["30296.70000", "2.002", 1688671674],
+                    ["30289.80000", "5.001", 1688671673],
+                ],
+            }
         }
 
         result = market_data.get_order_book("XXBTZUSD")
@@ -551,39 +530,36 @@ class TestMarketData:
         market_data: MarketData
     ):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "XXBTZUSD": [
-                    [
-                        "30243.40000",
-                        "0.34507674",
-                        1688669597.8277369,
-                        "b",
-                        "m",
-                        "",
-                        61044952
-                    ],
-                    [
-                        "30243.30000",
-                        "0.00376960",
-                        1688669598.2804112,
-                        "s",
-                        "l",
-                        "",
-                        61044953
-                    ],
-                    [
-                        "30243.30000",
-                        "0.01235716",
-                        1688669602.698379,
-                        "s",
-                        "m",
-                        "",
-                        61044956
-                    ]
+            "XXBTZUSD": [
+                [
+                    "30243.40000",
+                    "0.34507674",
+                    1688669597.8277369,
+                    "b",
+                    "m",
+                    "",
+                    61044952
                 ],
-                "last": "1688671969993150842"
-            },
+                [
+                    "30243.30000",
+                    "0.00376960",
+                    1688669598.2804112,
+                    "s",
+                    "l",
+                    "",
+                    61044953
+                ],
+                [
+                    "30243.30000",
+                    "0.01235716",
+                    1688669602.698379,
+                    "s",
+                    "m",
+                    "",
+                    61044956
+                ]
+            ],
+            "last": "1688671969993150842"
         }
 
         result = market_data.get_recent_trades("XXBTZUSD")
@@ -613,27 +589,24 @@ class TestMarketData:
         market_data: MarketData
     ):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "XXBTZUSD": [
-                    [
-                        1688671834,
-                        "30292.10000",
-                        "30297.50000"
-                    ],
-                    [
-                        1688671834,
-                        "30292.10000",
-                        "30296.70000"
-                    ],
-                    [
-                        1688671834,
-                        "30292.70000",
-                        "30296.70000"
-                    ]
+            "XXBTZUSD": [
+                [
+                    1688671834,
+                    "30292.10000",
+                    "30297.50000"
                 ],
-                "last": 1688672106
-            },
+                [
+                    1688671834,
+                    "30292.10000",
+                    "30296.70000"
+                ],
+                [
+                    1688671834,
+                    "30292.70000",
+                    "30296.70000"
+                ]
+            ],
+            "last": 1688672106
         }
 
         result = market_data.get_recent_spreads("XXBTZUSD")
@@ -669,19 +642,16 @@ class TestAccountData:
         account_data: AccountData
     ):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "ZUSD": "171288.6158",
-                "ZEUR": "504861.8946",
-                "XXBT": "1011.1908877900",
-                "XETH": "818.5500000000",
-                "USDT": "500000.00000000",
-                "DAI": "9999.9999999999",
-                "DOT": "2.5000000000",
-                "ETH2.S": "198.3970800000",
-                "ETH2": "2.5885574330",
-                "USD.M": "1213029.2780"
-            }
+            "ZUSD": "171288.6158",
+            "ZEUR": "504861.8946",
+            "XXBT": "1011.1908877900",
+            "XETH": "818.5500000000",
+            "USDT": "500000.00000000",
+            "DAI": "9999.9999999999",
+            "DOT": "2.5000000000",
+            "ETH2.S": "198.3970800000",
+            "ETH2": "2.5885574330",
+            "USD.M": "1213029.2780"
         }
 
         result = account_data.get_account_balance()
@@ -703,16 +673,13 @@ class TestAccountData:
         account_data: AccountData
     ):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "ZUSD": {
-                    "balance": 25435.21,
-                    "hold_trade": 8249.76
-                },
-                "XXBT": {
-                    "balance": 1.2435,
-                    "hold_trade": 0.8423
-                }
+            "ZUSD": {
+                "balance": 25435.21,
+                "hold_trade": 8249.76
+            },
+            "XXBT": {
+                "balance": 1.2435,
+                "hold_trade": 0.8423
             }
         }
 
@@ -735,18 +702,15 @@ class TestAccountData:
         account_data: AccountData
     ):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "eb": "1101.3425",
-                "tb": "392.2264",
-                "m": "7.0354",
-                "n": "-10.0232",
-                "c": "21.1063",
-                "v": "31.1297",
-                "e": "382.2032",
-                "mf": "375.1678",
-                "ml": "5432.57"
-            }
+            "eb": "1101.3425",
+            "tb": "392.2264",
+            "m": "7.0354",
+            "n": "-10.0232",
+            "c": "21.1063",
+            "v": "31.1297",
+            "e": "382.2032",
+            "mf": "375.1678",
+            "ml": "5432.57"
         }
 
         result = account_data.get_trade_balance()
@@ -770,68 +734,65 @@ class TestAccountData:
         account_data: AccountData
     ):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "open": {
-                    "OQCLML-BW3P3-BUCMWZ": {
-                        "refid": "None",
-                        "userref": 0,
-                        "status": "open",
-                        "opentm": 1688666559.8974,
-                        "starttm": 0,
-                        "expiretm": 0,
-                        "descr": {
-                            "pair": "XBTUSD",
-                            "type": "buy",
-                            "ordertype": "limit",
-                            "price": "30010.0",
-                            "price2": "0",
-                            "leverage": "none",
-                            "order": "buy 1.25000000 XBTUSD @ limit 30010.0",
-                            "close": ""
-                        },
-                        "vol": "1.25000000",
-                        "vol_exec": "0.37500000",
-                        "cost": "11253.7",
-                        "fee": "0.00000",
+            "open": {
+                "OQCLML-BW3P3-BUCMWZ": {
+                    "refid": "None",
+                    "userref": 0,
+                    "status": "open",
+                    "opentm": 1688666559.8974,
+                    "starttm": 0,
+                    "expiretm": 0,
+                    "descr": {
+                        "pair": "XBTUSD",
+                        "type": "buy",
+                        "ordertype": "limit",
                         "price": "30010.0",
-                        "stopprice": "0.00000",
-                        "limitprice": "0.00000",
-                        "misc": "",
-                        "oflags": "fciq",
-                        "trades": [
-                            "TCCCTY-WE2O6-P3NB37"
-                        ]
+                        "price2": "0",
+                        "leverage": "none",
+                        "order": "buy 1.25000000 XBTUSD @ limit 30010.0",
+                        "close": ""
                     },
-                    "OB5VMB-B4U2U-DK2WRW": {
-                        "refid": "None",
-                        "userref": 45326,
-                        "status": "open",
-                        "opentm": 1688665899.5699,
-                        "starttm": 0,
-                        "expiretm": 0,
-                        "descr": {
-                            "pair": "XBTUSD",
-                            "type": "buy",
-                            "ordertype": "limit",
-                            "price": "14500.0",
-                            "price2": "0",
-                            "leverage": "5:1",
-                            "order":
-                            "buy 0.27500000 XBTUSD "
-                            "@ limit 14500.0 with 5:1 leverage",
-                            "close": ""
-                        },
-                        "vol": "0.27500000",
-                        "vol_exec": "0.00000000",
-                        "cost": "0.00000",
-                        "fee": "0.00000",
-                        "price": "0.00000",
-                        "stopprice": "0.00000",
-                        "limitprice": "0.00000",
-                        "misc": "",
-                        "oflags": "fciq"
-                    }
+                    "vol": "1.25000000",
+                    "vol_exec": "0.37500000",
+                    "cost": "11253.7",
+                    "fee": "0.00000",
+                    "price": "30010.0",
+                    "stopprice": "0.00000",
+                    "limitprice": "0.00000",
+                    "misc": "",
+                    "oflags": "fciq",
+                    "trades": [
+                        "TCCCTY-WE2O6-P3NB37"
+                    ]
+                },
+                "OB5VMB-B4U2U-DK2WRW": {
+                    "refid": "None",
+                    "userref": 45326,
+                    "status": "open",
+                    "opentm": 1688665899.5699,
+                    "starttm": 0,
+                    "expiretm": 0,
+                    "descr": {
+                        "pair": "XBTUSD",
+                        "type": "buy",
+                        "ordertype": "limit",
+                        "price": "14500.0",
+                        "price2": "0",
+                        "leverage": "5:1",
+                        "order":
+                        "buy 0.27500000 XBTUSD "
+                        "@ limit 14500.0 with 5:1 leverage",
+                        "close": ""
+                    },
+                    "vol": "0.27500000",
+                    "vol_exec": "0.00000000",
+                    "cost": "0.00000",
+                    "fee": "0.00000",
+                    "price": "0.00000",
+                    "stopprice": "0.00000",
+                    "limitprice": "0.00000",
+                    "misc": "",
+                    "oflags": "fciq"
                 }
             }
         }
@@ -877,72 +838,69 @@ class TestAccountData:
         account_data: AccountData
     ):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "closed": {
-                    "O37652-RJWRT-IMO74O": {
-                        "refid": "None",
-                        "userref": 1,
-                        "status": "canceled",
-                        "reason": "User requested",
-                        "opentm": 1688148493.7708,
-                        "closetm": 1688148610.0482,
-                        "starttm": 0,
-                        "expiretm": 0,
-                        "descr": {
-                            "pair": "XBTGBP",
-                            "type": "buy",
-                            "ordertype": "stop-loss-limit",
-                            "price": "23667.0",
-                            "price2": "0",
-                            "leverage": "none",
-                            "order": "buy 0.00100000 XBTGBP @ limit 23667.0",
-                            "close": ""
-                        },
-                        "vol": "0.00100000",
-                        "vol_exec": "0.00000000",
-                        "cost": "0.00000",
-                        "fee": "0.00000",
-                        "price": "0.00000",
-                        "stopprice": "0.00000",
-                        "limitprice": "0.00000",
-                        "misc": "",
-                        "oflags": "fciq",
-                        "trigger": "index"
+            "closed": {
+                "O37652-RJWRT-IMO74O": {
+                    "refid": "None",
+                    "userref": 1,
+                    "status": "canceled",
+                    "reason": "User requested",
+                    "opentm": 1688148493.7708,
+                    "closetm": 1688148610.0482,
+                    "starttm": 0,
+                    "expiretm": 0,
+                    "descr": {
+                        "pair": "XBTGBP",
+                        "type": "buy",
+                        "ordertype": "stop-loss-limit",
+                        "price": "23667.0",
+                        "price2": "0",
+                        "leverage": "none",
+                        "order": "buy 0.00100000 XBTGBP @ limit 23667.0",
+                        "close": ""
                     },
-                    "O6YDQ5-LOMWU-37YKEE": {
-                        "refid": "None",
-                        "userref": 36493663,
-                        "status": "canceled",
-                        "reason": "User requested",
-                        "opentm": 1688148493.7708,
-                        "closetm": 1688148610.0477,
-                        "starttm": 0,
-                        "expiretm": 0,
-                        "descr": {
-                            "pair": "XBTEUR",
-                            "type": "buy",
-                            "ordertype": "take-profit-limit",
-                            "price": "27743.0",
-                            "price2": "0",
-                            "leverage": "none",
-                            "order": "buy 0.00100000 XBTEUR @ limit 27743.0",
-                            "close": ""
-                        },
-                        "vol": "0.00100000",
-                        "vol_exec": "0.00000000",
-                        "cost": "0.00000",
-                        "fee": "0.00000",
-                        "price": "0.00000",
-                        "stopprice": "0.00000",
-                        "limitprice": "0.00000",
-                        "misc": "",
-                        "oflags": "fciq",
-                        "trigger": "index"
-                    }
+                    "vol": "0.00100000",
+                    "vol_exec": "0.00000000",
+                    "cost": "0.00000",
+                    "fee": "0.00000",
+                    "price": "0.00000",
+                    "stopprice": "0.00000",
+                    "limitprice": "0.00000",
+                    "misc": "",
+                    "oflags": "fciq",
+                    "trigger": "index"
                 },
-                "count": 2
-            }
+                "O6YDQ5-LOMWU-37YKEE": {
+                    "refid": "None",
+                    "userref": 36493663,
+                    "status": "canceled",
+                    "reason": "User requested",
+                    "opentm": 1688148493.7708,
+                    "closetm": 1688148610.0477,
+                    "starttm": 0,
+                    "expiretm": 0,
+                    "descr": {
+                        "pair": "XBTEUR",
+                        "type": "buy",
+                        "ordertype": "take-profit-limit",
+                        "price": "27743.0",
+                        "price2": "0",
+                        "leverage": "none",
+                        "order": "buy 0.00100000 XBTEUR @ limit 27743.0",
+                        "close": ""
+                    },
+                    "vol": "0.00100000",
+                    "vol_exec": "0.00000000",
+                    "cost": "0.00000",
+                    "fee": "0.00000",
+                    "price": "0.00000",
+                    "stopprice": "0.00000",
+                    "limitprice": "0.00000",
+                    "misc": "",
+                    "oflags": "fciq",
+                    "trigger": "index"
+                }
+            },
+            "count": 2
         }
 
         result = account_data.get_closed_orders()
@@ -993,73 +951,70 @@ class TestAccountData:
         account_data: AccountData
     ):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "OBCMZD-JIEE7-77TH3F": {
-                    "refid": "None",
-                    "userref": 0,
-                    "status": "closed",
-                    "reason": None,
-                    "opentm": 1688665496.7808,
-                    "closetm": 1688665499.1922,
-                    "starttm": 0,
-                    "expiretm": 0,
-                    "descr": {
-                        "pair": "XBTUSD",
-                        "type": "buy",
-                        "ordertype": "stop-loss-limit",
-                        "price": "27500.0",
-                        "price2": "0",
-                        "leverage": "none",
-                        "order": "buy 1.25000000 XBTUSD @ limit 27500.0",
-                        "close": ""
-                    },
-                    "vol": "1.25000000",
-                    "vol_exec": "1.25000000",
-                    "cost": "27526.2",
-                    "fee": "26.2",
+            "OBCMZD-JIEE7-77TH3F": {
+                "refid": "None",
+                "userref": 0,
+                "status": "closed",
+                "reason": None,
+                "opentm": 1688665496.7808,
+                "closetm": 1688665499.1922,
+                "starttm": 0,
+                "expiretm": 0,
+                "descr": {
+                    "pair": "XBTUSD",
+                    "type": "buy",
+                    "ordertype": "stop-loss-limit",
                     "price": "27500.0",
-                    "stopprice": "0.00000",
-                    "limitprice": "0.00000",
-                    "misc": "",
-                    "oflags": "fciq",
-                    "trigger": "index",
-                    "trades": [
-                        "TZX2WP-XSEOP-FP7WYR"
-                    ]
+                    "price2": "0",
+                    "leverage": "none",
+                    "order": "buy 1.25000000 XBTUSD @ limit 27500.0",
+                    "close": ""
                 },
-                "OMMDB2-FSB6Z-7W3HPO": {
-                    "refid": "None",
-                    "userref": 0,
-                    "status": "closed",
-                    "reason": None,
-                    "opentm": 1688592012.2317,
-                    "closetm": 1688592012.2335,
-                    "starttm": 0,
-                    "expiretm": 0,
-                    "descr": {
-                        "pair": "XBTUSD",
-                        "type": "sell",
-                        "ordertype": "market",
-                        "price": "0",
-                        "price2": "0",
-                        "leverage": "none",
-                        "order": "sell 0.25000000 XBTUSD @ market",
-                        "close": ""
-                    },
-                    "vol": "0.25000000",
-                    "vol_exec": "0.25000000",
-                    "cost": "7500.0",
-                    "fee": "7.5",
-                    "price": "30000.0",
-                    "stopprice": "0.00000",
-                    "limitprice": "0.00000",
-                    "misc": "",
-                    "oflags": "fcib",
-                    "trades": [
-                        "TJUW2K-FLX2N-AR2FLU"
-                    ]
-                }
+                "vol": "1.25000000",
+                "vol_exec": "1.25000000",
+                "cost": "27526.2",
+                "fee": "26.2",
+                "price": "27500.0",
+                "stopprice": "0.00000",
+                "limitprice": "0.00000",
+                "misc": "",
+                "oflags": "fciq",
+                "trigger": "index",
+                "trades": [
+                    "TZX2WP-XSEOP-FP7WYR"
+                ]
+            },
+            "OMMDB2-FSB6Z-7W3HPO": {
+                "refid": "None",
+                "userref": 0,
+                "status": "closed",
+                "reason": None,
+                "opentm": 1688592012.2317,
+                "closetm": 1688592012.2335,
+                "starttm": 0,
+                "expiretm": 0,
+                "descr": {
+                    "pair": "XBTUSD",
+                    "type": "sell",
+                    "ordertype": "market",
+                    "price": "0",
+                    "price2": "0",
+                    "leverage": "none",
+                    "order": "sell 0.25000000 XBTUSD @ market",
+                    "close": ""
+                },
+                "vol": "0.25000000",
+                "vol_exec": "0.25000000",
+                "cost": "7500.0",
+                "fee": "7.5",
+                "price": "30000.0",
+                "stopprice": "0.00000",
+                "limitprice": "0.00000",
+                "misc": "",
+                "oflags": "fcib",
+                "trades": [
+                    "TJUW2K-FLX2N-AR2FLU"
+                ]
             }
         }
 
@@ -1110,41 +1065,38 @@ class TestAccountData:
         account_data: AccountData
     ):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "trades": {
-                    "THVRQM-33VKH-UCI7BS": {
-                        "ordertxid": "OQCLML-BW3P3-BUCMWZ",
-                        "postxid": "TKH2SE-M7IF5-CFI7LT",
-                        "pair": "XXBTZUSD",
-                        "time": 1688667796.8802,
-                        "type": "buy",
-                        "ordertype": "limit",
-                        "price": "30010.00000",
-                        "cost": "600.20000",
-                        "fee": "0.00000",
-                        "vol": "0.02000000",
-                        "margin": "0.00000",
-                        "misc": "",
-                        "trade_id": 40274859,
-                        "maker": True
-                    },
-                    "TCWJEG-FL4SZ-3FKGH6": {
-                        "ordertxid": "OQCLML-BW3P3-BUCMWZ",
-                        "postxid": "TKH2SE-M7IF5-CFI7LT",
-                        "pair": "XXBTZUSD",
-                        "time": 1688667769.6396,
-                        "type": "buy",
-                        "ordertype": "limit",
-                        "price": "30010.00000",
-                        "cost": "300.10000",
-                        "fee": "0.00000",
-                        "vol": "0.01000000",
-                        "margin": "0.00000",
-                        "misc": "",
-                        "trade_id": 39482674,
-                        "maker": True
-                    }
+            "trades": {
+                "THVRQM-33VKH-UCI7BS": {
+                    "ordertxid": "OQCLML-BW3P3-BUCMWZ",
+                    "postxid": "TKH2SE-M7IF5-CFI7LT",
+                    "pair": "XXBTZUSD",
+                    "time": 1688667796.8802,
+                    "type": "buy",
+                    "ordertype": "limit",
+                    "price": "30010.00000",
+                    "cost": "600.20000",
+                    "fee": "0.00000",
+                    "vol": "0.02000000",
+                    "margin": "0.00000",
+                    "misc": "",
+                    "trade_id": 40274859,
+                    "maker": True
+                },
+                "TCWJEG-FL4SZ-3FKGH6": {
+                    "ordertxid": "OQCLML-BW3P3-BUCMWZ",
+                    "postxid": "TKH2SE-M7IF5-CFI7LT",
+                    "pair": "XXBTZUSD",
+                    "time": 1688667769.6396,
+                    "type": "buy",
+                    "ordertype": "limit",
+                    "price": "30010.00000",
+                    "cost": "300.10000",
+                    "fee": "0.00000",
+                    "vol": "0.01000000",
+                    "margin": "0.00000",
+                    "misc": "",
+                    "trade_id": 39482674,
+                    "maker": True
                 }
             }
         }
@@ -1185,40 +1137,37 @@ class TestAccountData:
         account_data: AccountData
     ):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "THVRQM-33VKH-UCI7BS": {
-                    "ordertxid": "OQCLML-BW3P3-BUCMWZ",
-                    "postxid": "TKH2SE-M7IF5-CFI7LT",
-                    "pair": "XXBTZUSD",
-                    "time": 1688667796.8802,
-                    "type": "buy",
-                    "ordertype": "limit",
-                    "price": "30010.00000",
-                    "cost": "600.20000",
-                    "fee": "0.00000",
-                    "vol": "0.02000000",
-                    "margin": "0.00000",
-                    "misc": "",
-                    "trade_id": 93748276,
-                    "maker": True
-                },
-                "TTEUX3-HDAAA-RC2RUO": {
-                    "ordertxid": "OH76VO-UKWAD-PSBDX6",
-                    "postxid": "TKH2SE-M7IF5-CFI7LT",
-                    "pair": "XXBTZEUR",
-                    "time": 1688082549.3138,
-                    "type": "buy",
-                    "ordertype": "limit",
-                    "price": "27732.00000",
-                    "cost": "0.20020",
-                    "fee": "0.00000",
-                    "vol": "0.00020000",
-                    "margin": "0.00000",
-                    "misc": "",
-                    "trade_id": 74625834,
-                    "maker": True
-                }
+            "THVRQM-33VKH-UCI7BS": {
+                "ordertxid": "OQCLML-BW3P3-BUCMWZ",
+                "postxid": "TKH2SE-M7IF5-CFI7LT",
+                "pair": "XXBTZUSD",
+                "time": 1688667796.8802,
+                "type": "buy",
+                "ordertype": "limit",
+                "price": "30010.00000",
+                "cost": "600.20000",
+                "fee": "0.00000",
+                "vol": "0.02000000",
+                "margin": "0.00000",
+                "misc": "",
+                "trade_id": 93748276,
+                "maker": True
+            },
+            "TTEUX3-HDAAA-RC2RUO": {
+                "ordertxid": "OH76VO-UKWAD-PSBDX6",
+                "postxid": "TKH2SE-M7IF5-CFI7LT",
+                "pair": "XXBTZEUR",
+                "time": 1688082549.3138,
+                "type": "buy",
+                "ordertype": "limit",
+                "price": "27732.00000",
+                "cost": "0.20020",
+                "fee": "0.00000",
+                "vol": "0.00020000",
+                "margin": "0.00000",
+                "misc": "",
+                "trade_id": 74625834,
+                "maker": True
             }
         }
 
@@ -1303,15 +1252,12 @@ class TestTrading:
     @patch.object(Trading, '_get_response')
     def test_add_order(self, mock_get_response, trading: Trading):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "descr": {
-                    "order": "buy 1.45 XBTUSD @ limit 27500.0"
-                },
-                "txid": [
-                    "OU22CG-KLAF2-FWUDD7"
-                ]
-            }
+            "descr": {
+                "order": "buy 1.45 XBTUSD @ limit 27500.0"
+            },
+            "txid": [
+                "OU22CG-KLAF2-FWUDD7"
+            ]
         }
 
         result = trading.add_order(
@@ -1351,10 +1297,7 @@ class TestTrading:
     @patch.object(Trading, '_get_response')
     def test_cancel_order(self, mock_get_response, trading: Trading):
         mock_get_response.return_value = {
-            "error": [],
-            "result": {
-                "count": 1
-            }
+            "count": 1
         }
 
         with pytest.raises(ValueError):
