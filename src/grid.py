@@ -35,9 +35,9 @@ class GridStrategy:
     current_ask: Decimal
     current_bid: Decimal
 
-    account_client = AccountData()
-    market_client = MarketData()
-    trading_client = Trading()
+    account_client: AccountData
+    market_client: MarketData
+    trading_client: Trading
 
     def __init__(
         self,
@@ -52,6 +52,11 @@ class GridStrategy:
             f"with base price of {base_price} and "
             f"rungs spread {percentage * 100}% apart."
         )
+
+        # init clients
+        self.account_client = AccountData()
+        self.market_client = MarketData()
+        self.trading_client = Trading()
 
         # ensure valid arguments
         if base_price <= 0:
