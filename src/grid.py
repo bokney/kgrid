@@ -96,7 +96,7 @@ class GridStrategy:
             )
             self.logger.error(message)
             raise ValueError(message)
-        
+
         # save arguments
         self.base_price = base_price
         self.percentage = percentage
