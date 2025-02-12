@@ -47,10 +47,6 @@ class TestBaseAPI:
             with pytest.raises(ValueError, match="Error! API_KEY is missing!"):
                 BaseAPI()
 
-    @patch.dict(
-        os.environ,
-        {"API_SECRET": "dGVzdF9zZWNyZXQ=", "API_KEY": "test_key"}
-    )
     def test_generate_headers(self, base_api: BaseAPI):
         URI = "/test/endpoint"
         post_data = {"nonce": 123456789, "param1": "value1"}
@@ -61,10 +57,6 @@ class TestBaseAPI:
         assert isinstance(headers["API-Sign"], str)
 
     @patch.object(requests.Session, 'post')
-    @patch.dict(
-        os.environ,
-        {"API_SECRET": "dGVzdF9zZWNyZXQ=", "API_KEY": "test_key"}
-    )
     def test_create_signed_request(self, mock_post, base_api: BaseAPI):
         mock_response = MagicMock()
         mock_response.json.return_value = {"result": "success"}
@@ -91,10 +83,6 @@ class TestBaseAPI:
         assert headers["API-Key"] == "test_key"
 
     @patch.object(requests.Session, 'post')
-    @patch.dict(
-        os.environ,
-        {"API_SECRET": "dGVzdF9zZWNyZXQ=", "API_KEY": "test_key"}
-    )
     def test_create_signed_request_error(self, mock_post, base_api: BaseAPI):
         mock_response = MagicMock()
         mock_response.json.side_effect = ValueError("Non-JSON response")
@@ -139,16 +127,7 @@ class TestBaseAPI:
 class TestMarketData:
     @pytest.fixture
     def market_data(self):
-        with patch(
-            "src.kraken_api.load_dotenv",
-            lambda *args, **kwargs: None
-        ):
-            with patch.dict(
-                os.environ,
-                {"API_KEY": "test_key", "API_SECRET": "test_secret"},
-                clear=True
-            ):
-                yield MarketData()
+        return MarketData()
 
     @patch.object(MarketData, '_get_response')
     def test_get_server_time(self, mock_get_response, market_data: MarketData):
@@ -615,16 +594,7 @@ class TestMarketData:
 class TestAccountData:
     @pytest.fixture
     def account_data(self):
-        with patch(
-            "src.kraken_api.load_dotenv",
-            lambda *args, **kwargs: None
-        ):
-            with patch.dict(
-                os.environ,
-                {"API_KEY": "test_key", "API_SECRET": "test_secret"},
-                clear=True
-            ):
-                yield AccountData()
+        return AccountData()
 
     @patch.object(AccountData, '_get_response')
     def test_get_account_balance(
@@ -1229,16 +1199,7 @@ class TestAccountData:
 class TestTrading:
     @pytest.fixture
     def trading(self):
-        with patch(
-            "src.kraken_api.load_dotenv",
-            lambda *args, **kwargs: None
-        ):
-            with patch.dict(
-                os.environ,
-                {"API_KEY": "test_key", "API_SECRET": "test_secret"},
-                clear=True
-            ):
-                yield Trading()
+        return Trading()
 
     @patch.object(Trading, '_get_response')
     def test_add_order(self, mock_get_response, trading: Trading):
