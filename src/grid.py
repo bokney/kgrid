@@ -20,17 +20,26 @@ class Rung:
     volume: Decimal
     order: Optional[Order] = None
 
+    def __init__(
+        self,
+        price: Decimal,
+        volume: Decimal
+    ):
+        self.price = price
+        self.volume = volume
+
 
 class GridStrategy:
     pair: str
 
-    open_orders: List[Order] = []
-    closed_orders: List[Order] = []
+    open_orders: List[Order]
+    closed_orders: List[Order]
 
     rungs: List[Rung]
     rung_count: int
     base_price: Decimal
     percentage: Decimal
+    total_volume: Decimal
 
     current_ask: Decimal
     current_bid: Decimal
@@ -44,6 +53,7 @@ class GridStrategy:
         pair: str,
         base_price: Decimal,
         percentage: Decimal,
+        total_volume: Decimal,
         rung_count: int
     ):
         self.logger = get_logger(f'{pair.replace("/", "")}')
@@ -60,11 +70,43 @@ class GridStrategy:
 
         # ensure valid arguments
         if base_price <= 0:
-            self.logger.error("Error: base_price must be positive.")
-            raise ValueError("Error: base_price must be positive.")
+            message = (
+                "Error: base_price must be positive, "
+                f"was {base_price}.")
+            self.logger.error(message)
+            raise ValueError(message)
         if percentage <= 0:
-            self.logger.error("Error: percentage must be greater than 0.")
-            raise ValueError("Error: percentage must be greater than 0.")
+            message = (
+                "Error: percentage must be greater than 0, "
+                f"was {percentage}."
+            )
+            self.logger.error(message)
+            raise ValueError(message)
+        if total_volume <= 0:
+            message = (
+                "Error: total_volume must be greater than 0, "
+                f"was {total_volume}."
+            )
+            self.logger.error(message)
+            raise ValueError(message)
+        if rung_count < 2:
+            message = (
+                "Error: rung_count must be greater than 2, "
+                f"was {rung_count}."
+            )
+            self.logger.error(message)
+            raise ValueError(message)
+        
+        # save arguments
+        self.base_price = base_price
+        self.percentage = percentage
+        self.total_volume = total_volume
+        self.rung_count = rung_count
+
+        # create lists
+        self.rungs = []
+        self.open_orders = []
+        self.closed_orders = []
 
         # ensure pair is valid
         pair_list = self.market_client.get_tradable_asset_pairs(pair)
@@ -74,7 +116,17 @@ class GridStrategy:
             )
         self.pair = pair
 
+        # get price data
         self.update_price()
+
+        # set up rungs
+        for i in range(rung_count):
+            price = base_price * ((1 + self.percentage) ** i)
+            volume = self.total_volume / self.rung_count
+            self.rungs.append(Rung(
+                price=price,
+                volume=volume
+            ))
 
     def update_price(self):
         # gets latest ask/bid
