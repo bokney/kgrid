@@ -34,16 +34,7 @@ from src.kraken_api import (
 class TestBaseAPI:
     @pytest.fixture
     def base_api(self):
-        with patch(
-            "src.kraken_api.load_dotenv",
-            lambda *args, **kwargs: None
-        ):
-            with patch.dict(
-                os.environ,
-                {"API_KEY": "test_key", "API_SECRET": "test_secret"},
-                clear=True
-            ):
-                yield BaseAPI()
+        return BaseAPI()
 
     @patch("src.kraken_api.load_dotenv", lambda *args, **kwargs: None)
     @patch.dict(os.environ, {}, clear=True)
