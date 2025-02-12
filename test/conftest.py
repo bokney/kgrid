@@ -12,7 +12,10 @@ def patch_env():
     ):
         with patch.dict(
             os.environ,
-            {"API_KEY": "test_key", "API_SECRET": "test_secret"},
+            {
+                "API_KEY": "test_key",
+                "API_SECRET": "dGVzdF9zZWNyZXQ="
+            },
             clear=True
         ):
             yield
