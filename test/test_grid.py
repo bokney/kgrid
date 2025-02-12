@@ -93,6 +93,7 @@ class TestGridStrategy:
             pair="ETH/XBT",
             base_price=Decimal("3000.0"),
             percentage=Decimal("0.02"),
+            total_volume=Decimal("150"),
             rung_count=5
         )
         with pytest.raises(ValueError):
@@ -100,6 +101,7 @@ class TestGridStrategy:
                 pair="ETH/XBT",
                 base_price=Decimal("-1"),
                 percentage=Decimal("0.02"),
+                total_volume=Decimal("150"),
                 rung_count=5
             )
 
@@ -117,6 +119,7 @@ class TestGridStrategy:
             pair="ETH/XBT",
             base_price=Decimal("3000.0"),
             percentage=Decimal("0.02"),
+            total_volume=Decimal("150"),
             rung_count=5
         )
         with pytest.raises(ValueError):
@@ -124,7 +127,60 @@ class TestGridStrategy:
                 pair="ETH/XBT",
                 base_price=Decimal("3000.0"),
                 percentage=Decimal("-0.1"),
+                total_volume=Decimal("150"),
                 rung_count=5
+            )
+
+    @patch.object(MarketData, 'get_ticker_information')
+    @patch.object(MarketData, 'get_tradable_asset_pairs')
+    def test_valiate_total_volume(
+        self,
+        mock_get_tradable_asset_pairs,
+        get_ticker_information,
+        mock_tradable_pairs
+    ):
+        mock_get_tradable_asset_pairs.return_value = mock_tradable_pairs
+
+        GridStrategy(
+            pair="ETH/XBT",
+            base_price=Decimal("3000.0"),
+            percentage=Decimal("0.02"),
+            total_volume=Decimal("150"),
+            rung_count=5
+        )
+        with pytest.raises(ValueError):
+            GridStrategy(
+                pair="ETH/XBT",
+                base_price=Decimal("3000.0"),
+                percentage=Decimal("0.02"),
+                total_volume=Decimal("-10"),
+                rung_count=5
+            )
+
+    @patch.object(MarketData, 'get_ticker_information')
+    @patch.object(MarketData, 'get_tradable_asset_pairs')
+    def test_valiate_rung_count(
+        self,
+        mock_get_tradable_asset_pairs,
+        get_ticker_information,
+        mock_tradable_pairs
+    ):
+        mock_get_tradable_asset_pairs.return_value = mock_tradable_pairs
+
+        GridStrategy(
+            pair="ETH/XBT",
+            base_price=Decimal("3000.0"),
+            percentage=Decimal("0.02"),
+            total_volume=Decimal("150"),
+            rung_count=5
+        )
+        with pytest.raises(ValueError):
+            GridStrategy(
+                pair="ETH/XBT",
+                base_price=Decimal("3000.0"),
+                percentage=Decimal("0.02"),
+                total_volume=Decimal("150"),
+                rung_count=1
             )
 
     @patch.object(MarketData, 'get_ticker_information')
@@ -141,6 +197,7 @@ class TestGridStrategy:
                 pair="ETH/XBT",
                 base_price=Decimal("3000.0"),
                 percentage=Decimal("0.02"),
+                total_volume=Decimal("150"),
                 rung_count=5
             )
         except ValueError:
@@ -158,6 +215,7 @@ class TestGridStrategy:
                 pair="ABC/EFG",
                 base_price=Decimal("1000.0"),
                 percentage=Decimal("0.05"),
+                total_volume=Decimal("150"),
                 rung_count=10
             )
 
@@ -176,6 +234,7 @@ class TestGridStrategy:
             pair="ETH/XBT",
             base_price=Decimal("3000.0"),
             percentage=Decimal("0.02"),
+            total_volume=Decimal("150"),
             rung_count=5
         )
         assert strategy.pair == "ETH/XBT"
