@@ -1,9 +1,9 @@
 
 import pytest
 from decimal import Decimal
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from src.grid import GridStrategy
-from src.kraken_api import TickerInfo, MarketData, TradableAssetPair
+from src.kraken_api import TickerInfo, TradableAssetPair
 
 
 class TestGridStrategy:
@@ -271,5 +271,5 @@ class TestGridStrategy:
             rung.volume == Decimal("150") / 5 for rung in strategy.rungs
         )
         assert all(
-            rung.order == None for rung in strategy.rungs
+            rung.order is None for rung in strategy.rungs
         )
