@@ -110,7 +110,7 @@ class TestGridStrategy:
         mock_tradable_pairs
     ):
         valid_params[invalid_param] = value
-        mock_get_tradable_asset_pairs.return_value = mock_tradable_pairs    
+        mock_get_tradable_asset_pairs.return_value = mock_tradable_pairs
         with pytest.raises(ValueError):
             GridStrategy(**valid_params)
 
@@ -149,7 +149,6 @@ class TestGridStrategy:
                     total_volume=valid_params['total_volume'],
                     rung_count=valid_params['rung_count'],
                 )
-
 
     @patch("src.grid.MarketData.get_ticker_information")
     @patch("src.grid.MarketData.get_tradable_asset_pairs")
