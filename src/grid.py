@@ -68,40 +68,14 @@ class GridStrategy:
         self.market_client = MarketData()
         self.trading_client = Trading()
 
-        # ensure valid arguments
-        if base_price <= 0:
-            message = (
-                "Error: base_price must be positive, "
-                f"was {base_price}.")
-            self.logger.error(message)
-            raise ValueError(message)
-        if percentage <= 0:
-            message = (
-                "Error: percentage must be greater than 0, "
-                f"was {percentage}."
-            )
-            self.logger.error(message)
-            raise ValueError(message)
-        if total_volume <= 0:
-            message = (
-                "Error: total_volume must be greater than 0, "
-                f"was {total_volume}."
-            )
-            self.logger.error(message)
-            raise ValueError(message)
-        if rung_count < 2:
-            message = (
-                "Error: rung_count must be greater than 2, "
-                f"was {rung_count}."
-            )
-            self.logger.error(message)
-            raise ValueError(message)
-
         # save arguments
         self.base_price = base_price
         self.percentage = percentage
         self.total_volume = total_volume
         self.rung_count = rung_count
+
+        # ensure valid arguments
+        self._validate_inputs()
 
         # create lists
         self.rungs = []
@@ -109,11 +83,7 @@ class GridStrategy:
         self.closed_orders = []
 
         # ensure pair is valid
-        pair_list = self.market_client.get_tradable_asset_pairs(pair)
-        if not any(p.name == pair for p in pair_list):
-            raise ValueError(
-                f"Error: {pair} does not represent a viable asset pair."
-            )
+        self._validate_pair(pair)
         self.pair = pair
 
         # get price data
@@ -128,6 +98,42 @@ class GridStrategy:
                 volume=volume
             ))
 
+    def _validate_inputs(self):
+        if self.base_price <= 0:
+            message = (
+                "Error: base_price must be positive, "
+                f"was {self.base_price}.")
+            self.logger.error(message)
+            raise ValueError(message)
+        if self.percentage <= 0:
+            message = (
+                "Error: percentage must be greater than 0, "
+                f"was {self.percentage}."
+            )
+            self.logger.error(message)
+            raise ValueError(message)
+        if self.total_volume <= 0:
+            message = (
+                "Error: total_volume must be greater than 0, "
+                f"was {self.total_volume}."
+            )
+            self.logger.error(message)
+            raise ValueError(message)
+        if self.rung_count < 2:
+            message = (
+                "Error: rung_count must be greater than 2, "
+                f"was {self.rung_count}."
+            )
+            self.logger.error(message)
+            raise ValueError(message)
+        
+    def _validate_pair(self, pair: str):
+        pair_list = self.market_client.get_tradable_asset_pairs(pair)
+        if not any(p.name == pair for p in pair_list):
+            raise ValueError(
+                f"Error: {pair} does not represent a viable asset pair."
+            )
+
     def update_price(self):
         # gets latest ask/bid
         ticker_info = self.market_client.get_ticker_information(self.pair)
@@ -138,3 +144,15 @@ class GridStrategy:
             f"Ask: {self.current_ask}, "
             f"Bid: {self.current_bid}."
         )
+
+    def create_rungs(self):
+        self._validate_inputs()
+        self.rungs.clear()
+        for i in range(self.rung_count):
+            price = self.base_price * ((1 + self.percentage) ** i)
+            volume = self.total_volume / self.rung_count
+            self.rungs.append(Rung(
+                price=price,
+                volume=volume
+            ))
+ 
