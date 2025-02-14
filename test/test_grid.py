@@ -1,7 +1,7 @@
 
 import pytest
 from decimal import Decimal
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from src.grid import GridStrategy
 from src.kraken_api import TickerInfo, MarketData, TradableAssetPair
 
@@ -79,8 +79,8 @@ class TestGridStrategy:
             )
         ]
 
-    @patch.object(MarketData, 'get_ticker_information')
-    @patch.object(MarketData, 'get_tradable_asset_pairs')
+    @patch("src.grid.MarketData.get_ticker_information")
+    @patch("src.grid.MarketData.get_tradable_asset_pairs")
     def test_valiate_base_price(
         self,
         mock_get_tradable_asset_pairs,
@@ -105,8 +105,8 @@ class TestGridStrategy:
                 rung_count=5
             )
 
-    @patch.object(MarketData, 'get_ticker_information')
-    @patch.object(MarketData, 'get_tradable_asset_pairs')
+    @patch("src.grid.MarketData.get_ticker_information")
+    @patch("src.grid.MarketData.get_tradable_asset_pairs")
     def test_valiate_percentage(
         self,
         mock_get_tradable_asset_pairs,
@@ -131,8 +131,8 @@ class TestGridStrategy:
                 rung_count=5
             )
 
-    @patch.object(MarketData, 'get_ticker_information')
-    @patch.object(MarketData, 'get_tradable_asset_pairs')
+    @patch("src.grid.MarketData.get_ticker_information")
+    @patch("src.grid.MarketData.get_tradable_asset_pairs")
     def test_valiate_total_volume(
         self,
         mock_get_tradable_asset_pairs,
@@ -157,8 +157,8 @@ class TestGridStrategy:
                 rung_count=5
             )
 
-    @patch.object(MarketData, 'get_ticker_information')
-    @patch.object(MarketData, 'get_tradable_asset_pairs')
+    @patch("src.grid.MarketData.get_ticker_information")
+    @patch("src.grid.MarketData.get_tradable_asset_pairs")
     def test_valiate_rung_count(
         self,
         mock_get_tradable_asset_pairs,
@@ -183,8 +183,8 @@ class TestGridStrategy:
                 rung_count=1
             )
 
-    @patch.object(MarketData, 'get_ticker_information')
-    @patch.object(MarketData, 'get_tradable_asset_pairs')
+    @patch("src.grid.MarketData.get_ticker_information")
+    @patch("src.grid.MarketData.get_tradable_asset_pairs")
     def test_check_valid_pair(
         self,
         mock_get_tradable_asset_pairs,
@@ -203,7 +203,7 @@ class TestGridStrategy:
         except ValueError:
             pytest.fail("GridStrategy raised ValueError for a valid pair")
 
-    @patch.object(MarketData, 'get_tradable_asset_pairs')
+    @patch("src.grid.MarketData.get_tradable_asset_pairs")
     def test_check_invalid_pair(
         self,
         mock_get_tradable_asset_pairs,
@@ -219,8 +219,8 @@ class TestGridStrategy:
                 rung_count=10
             )
 
-    @patch.object(MarketData, 'get_ticker_information')
-    @patch.object(MarketData, 'get_tradable_asset_pairs')
+    @patch("src.grid.MarketData.get_ticker_information")
+    @patch("src.grid.MarketData.get_tradable_asset_pairs")
     def test_update_price(
         self,
         mock_get_tradable_asset_pairs,
@@ -240,3 +240,36 @@ class TestGridStrategy:
         assert strategy.pair == "ETH/XBT"
         assert strategy.current_ask == Decimal("30300.10000")
         assert strategy.current_bid == Decimal("30300.10000")
+
+    @patch("src.grid.MarketData.get_ticker_information")
+    @patch("src.grid.MarketData.get_tradable_asset_pairs")
+    def test_create_rungs(
+        self,
+        mock_get_tradable_asset_pairs,
+        mock_get_ticker_information,
+        mock_tradable_pairs,
+        mock_ticker_info
+    ):
+        mock_get_tradable_asset_pairs.return_value = mock_tradable_pairs
+
+        strategy = GridStrategy(
+            pair="ETH/XBT",
+            base_price=Decimal("3000.0"),
+            percentage=Decimal("0.02"),
+            total_volume=Decimal("150"),
+            rung_count=5
+        )
+        strategy.create_rungs()
+
+        assert len(strategy.rungs) == 5
+        assert strategy.rungs[0].price == Decimal("3000.0")
+        assert strategy.rungs[-1].price == (
+            Decimal("3000.0") * ((1 + Decimal("0.02")) ** 4)
+        )
+        assert strategy.rungs[0].volume == Decimal("150") / 5
+        assert all(
+            rung.volume == Decimal("150") / 5 for rung in strategy.rungs
+        )
+        assert all(
+            rung.order == None for rung in strategy.rungs
+        )
